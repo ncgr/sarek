@@ -26,7 +26,7 @@ process MINIMAP2_ALIGN {
 
     def args = task.ext.args ?: ''
     def args2 = task.ext.args2 ?: ''
-    def prefix = task.ext.prefix ?: "${meta.sample ?: meta.id}_${task.index}"
+    def prefix = task.ext.prefix ?: "${meta.patient}_${meta.sample ?: meta.id}_${task.index}"
     
     // Extract read group - remove quotes if present
     def rg = meta.read_group ?: "@RG\\\\tID:${meta.id}\\\\tSM:${meta.sample}\\\\tLB:${meta.sample}\\\\tPL:ILLUMINA\\\\tPU:${meta.lane ?: '1'}"
@@ -51,7 +51,7 @@ process MINIMAP2_ALIGN {
     else
         echo "DEBUG: Using .mmi index: \$INDEX"
     fi
-    
+
     echo "DEBUG: Starting alignment and sorting..."
     minimap2 \\
         \$PRESET \\
