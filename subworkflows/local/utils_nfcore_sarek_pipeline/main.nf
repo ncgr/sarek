@@ -124,6 +124,7 @@ workflow PIPELINE_INITIALISATION {
         params.known_snps,
         params.known_snps_tbi,
         params.mappability,
+        params.minimap2,
         params.multiqc_config,
         params.ngscheckmate_bed,
         params.pon,

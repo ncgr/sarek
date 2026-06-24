@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `minimap2` as a selectable aligner (`--aligner minimap2`) for short-read mapping, with on-the-fly `.mmi` index building (`--minimap2`)
+
 ### Changed
 
 ### Fixed

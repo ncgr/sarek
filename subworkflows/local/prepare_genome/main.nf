@@ -3,6 +3,7 @@ include { BWAMEM2_INDEX                             } from '../../../modules/nf-
 include { BWA_INDEX as BWAMEM1_INDEX                } from '../../../modules/nf-core/bwa/index'
 include { DRAGMAP_HASHTABLE                         } from '../../../modules/nf-core/dragmap/hashtable'
 include { GATK4_CREATESEQUENCEDICTIONARY            } from '../../../modules/nf-core/gatk4/createsequencedictionary'
+include { MINIMAP2_INDEX                            } from '../../../modules/nf-core/minimap2/index'
 include { MSISENSORPRO_SCAN                         } from '../../../modules/nf-core/msisensorpro/scan'
 include { SAMTOOLS_FAIDX                            } from '../../../modules/nf-core/samtools/faidx'
 include { TABIX_TABIX as TABIX_BCFTOOLS_ANNOTATIONS } from '../../../modules/nf-core/tabix/tabix'
@@ -44,6 +45,7 @@ workflow PREPARE_GENOME {
     known_indels_tbi_in         // params.known_indels_tbi
     known_snps_in               // params.known_snps
     known_snps_tbi_in           // params.known_snps_tbi
+    minimap2_in                 // params.minimap2
     msisensor2_models_in        // channel: [optional]  msisensor2_models
     msisensorpro_scan_in        // channel: [optional]  msisensorpro_scan
     pon_in                      // params.pon
@@ -84,6 +86,15 @@ workflow PREPARE_GENOME {
         }
         else if (aligner == 'dragmap') {
             index_alignment = Channel.fromPath(dragmap_in).map { index -> [[id: 'dragmap'], index] }.collect()
+        }
+        else if (!minimap2_in && aligner == 'minimap2') {
+            MINIMAP2_INDEX(fasta)
+            index_alignment = MINIMAP2_INDEX.out.index.collect()
+            // NB: MINIMAP2_INDEX reports its version via the `versions` topic channel,
+            // which is collected centrally in workflows/sarek, so no explicit mix here.
+        }
+        else if (aligner == 'minimap2') {
+            index_alignment = Channel.fromPath(minimap2_in).map { index -> [[id: 'minimap2'], index] }.collect()
         }
     }
     else {

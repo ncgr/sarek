@@ -7,6 +7,7 @@
 include { BWAMEM2_MEM            } from '../../../modules/nf-core/bwamem2/mem/main'
 include { BWA_MEM as BWAMEM1_MEM } from '../../../modules/nf-core/bwa/mem/main'
 include { DRAGMAP_ALIGN          } from '../../../modules/nf-core/dragmap/align/main'
+include { MINIMAP2_ALIGN         } from '../../../modules/nf-core/minimap2/align/main'
 include { SENTIEON_BWAMEM        } from '../../../modules/nf-core/sentieon/bwamem/main'
 
 workflow FASTQ_ALIGN {
@@ -26,6 +27,11 @@ workflow FASTQ_ALIGN {
     BWAMEM1_MEM(reads, index, [[id:'no_fasta'], []], sort) // If aligner is bwa-mem
     BWAMEM2_MEM(reads, index, [[id:'no_fasta'], []], sort) // If aligner is bwa-mem2
     DRAGMAP_ALIGN(reads, index, [[id:'no_fasta'], []], sort) // If aligner is dragmap
+    // minimap2/align signature differs from bwa/dragmap:
+    // (reads, reference, bam_format, bam_index_extension, cigar_paf_format, cigar_bam)
+    // bam_format=true makes the module emit a samtools-sorted BAM (coordinate-sorted; name-sort
+    // for MarkDuplicatesSpark is handled via ext.args2 in conf/modules/aligner.config).
+    MINIMAP2_ALIGN(reads, index, true, '', false, false) // If aligner is minimap2
     // The sentieon-bwamem-module does sorting as part of the conversion from sam to bam.
     SENTIEON_BWAMEM(reads, index, fasta, fasta_fai) // If aligner is sentieon-bwamem
 
@@ -35,6 +41,7 @@ workflow FASTQ_ALIGN {
     bam = bam.mix(BWAMEM1_MEM.out.bam)
     bam = bam.mix(BWAMEM2_MEM.out.bam)
     bam = bam.mix(DRAGMAP_ALIGN.out.bam)
+    bam = bam.mix(MINIMAP2_ALIGN.out.bam)
     bam = bam.mix(SENTIEON_BWAMEM.out.bam_and_bai.map{ meta, bam, bai -> [ meta, bam ] })
 
     bai = SENTIEON_BWAMEM.out.bam_and_bai.map{ meta, bam, bai -> [ meta, bai ] }
@@ -46,6 +53,8 @@ workflow FASTQ_ALIGN {
     versions = versions.mix(BWAMEM1_MEM.out.versions)
     versions = versions.mix(BWAMEM2_MEM.out.versions)
     versions = versions.mix(DRAGMAP_ALIGN.out.versions)
+    // NB: MINIMAP2_ALIGN emits its version on the `versions` topic channel (collected
+    // centrally in workflows/sarek), so it is intentionally not mixed in here.
     versions = versions.mix(SENTIEON_BWAMEM.out.versions)
 
     emit:

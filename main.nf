@@ -50,6 +50,7 @@ params.known_snps              = getGenomeAttribute('known_snps')
 params.known_snps_tbi          = getGenomeAttribute('known_snps_tbi')
 params.known_snps_vqsr         = getGenomeAttribute('known_snps_vqsr')
 params.mappability             = getGenomeAttribute('mappability')
+params.minimap2                = getGenomeAttribute('minimap2')
 params.msisensor2_models       = getGenomeAttribute('msisensor2_models')
 params.msisensorpro_scan       = getGenomeAttribute('msisensorpro_scan')
 params.ngscheckmate_bed        = getGenomeAttribute('ngscheckmate_bed')
@@ -117,6 +118,7 @@ workflow NFCORE_SAREK {
         params.known_indels_tbi,
         params.known_snps,
         params.known_snps_tbi,
+        params.minimap2,
         params.msisensor2_models,
         params.msisensorpro_scan,
         params.pon,

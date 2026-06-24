@@ -1,0 +1,35 @@
+nextflow_pipeline {
+
+    name "Test pipeline"
+    script "../main.nf"
+
+    def test_scenario = [
+        [
+            // Unlike DragMap, minimap2 short-read BAMs are standard, so base recalibration
+            // is NOT skipped here; we only skip QC/markduplicates for test speed.
+            name: "-profile test --aligner minimap2 --save_reference skip QC/md",
+            params: [
+                aligner: 'minimap2',
+                save_reference: true,
+                skip_tools: 'fastqc,markduplicates,mosdepth,multiqc,samtools',
+                tools: ''
+            ]
+        ],
+        [
+            name: "-profile test --aligner minimap2 --save_reference --build_only_index",
+            params: [
+                aligner: 'minimap2',
+                build_only_index: true,
+                input: false,
+                save_reference: true,
+                skip_tools: 'multiqc',
+                tools: ''
+            ]
+        ]
+    ]
+
+    // Generate tests for each scenario
+    test_scenario.each { scenario ->
+        test(scenario.name, UTILS.getTest(scenario))
+    }
+}

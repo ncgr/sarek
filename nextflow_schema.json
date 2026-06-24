@@ -280,7 +280,7 @@
                     "type": "string",
                     "default": "bwa-mem",
                     "fa_icon": "fas fa-puzzle-piece",
-                    "enum": ["bwa-mem", "bwa-mem2", "dragmap", "sentieon-bwamem", "parabricks"],
+                    "enum": ["bwa-mem", "bwa-mem2", "dragmap", "minimap2", "sentieon-bwamem", "parabricks"],
                     "description": "Specify aligner to be used to map reads to reference genome.",
                     "help_text": "Sarek will build missing indices automatically if not provided. Set `--bwa false` if indices should be (re-)built.\nIf DragMap is selected as aligner, it is recommended to skip baserecalibration with `--skip_tools baserecalibrator`. For more info see [here](https://gatk.broadinstitute.org/hc/en-us/articles/4407897446939--How-to-Run-germline-single-sample-short-variant-discovery-in-DRAGEN-mode)."
                 },
@@ -972,6 +972,14 @@
                     "fa_icon": "fas fa-copy",
                     "description": "Path to dragmap indices.",
                     "help_text": "If you wish to recompute indices available on igenomes, set `--dragmap false`.\n\n> **NB** If none provided, will be generated automatically from the FASTA reference, if `--aligner dragmap` is specified. Combine with `--save_reference` to save for future runs.\n\nIf you use AWS iGenomes, this has already been set for you appropriately."
+                },
+                "minimap2": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "fa_icon": "fas fa-copy",
+                    "description": "Path to minimap2 minimizer index (.mmi).",
+                    "help_text": "> **NB** If none provided, will be generated automatically from the FASTA reference, if `--aligner minimap2` is specified. Combine with `--save_reference` to save for future runs.\n\nAWS iGenomes does not ship a minimap2 index, so by default it is built from the FASTA reference."
                 },
                 "fasta": {
                     "type": "string",
